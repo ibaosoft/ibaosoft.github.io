@@ -1,0 +1,393 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.1.1"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png"><link rel="mask-icon" href="/images/logo.svg" color="#222"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="baidu-site-verification" content="MtfwxbBjfK"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext"><link rel="stylesheet" href="/lib/font-awesome/css/all.min.css"><link rel="stylesheet" href="/lib/animate-css/animate.min.css"><script class="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"note.ibaosoft.com",root:"/",scheme:"Gemini",version:"8.0.0-rc.5",exturl:!0,sidebar:{position:"left",display:"post",padding:18,offset:12},copycode:!0,bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!1,mediumzoom:!1,lazyload:!1,pangu:!1,comments:{style:"tabs",active:"gitalk",storage:!0,lazyload:!0,nav:{gitalk:{order:-1},valine:{order:-1}},activeClass:"gitalk"},motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"fadeInDown",post_body:"fadeInDown",coll_header:"fadeInLeft",sidebar:"fadeInUp"}},prism:!1}</script><meta name="description" content="脚本编写 – 翻译HUBOT官方文档本文根据官方文档对照进行的翻译注释，建议阅读官方文档。 开箱急用的Hubot并没有做太多，但它是可扩展可编程的机器人。社区编写并维护了数百个脚本，并且自己编写脚本也很容易。您可以在hubot的scripts目录中创建自定义的脚本，也可以创建脚本包(库)并且分享到社区。"><meta property="og:type" content="article"><meta property="og:title" content="hubot-scripting"><meta property="og:url" content="http://note.ibaosoft.com/2020/08/31/hubot-scripting/"><meta property="og:site_name" content="Ibaosoft&#96;s notes"><meta property="og:description" content="脚本编写 – 翻译HUBOT官方文档本文根据官方文档对照进行的翻译注释，建议阅读官方文档。 开箱急用的Hubot并没有做太多，但它是可扩展可编程的机器人。社区编写并维护了数百个脚本，并且自己编写脚本也很容易。您可以在hubot的scripts目录中创建自定义的脚本，也可以创建脚本包(库)并且分享到社区。"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2020-08-31T06:54:12.000Z"><meta property="article:modified_time" content="2020-09-03T02:46:59.688Z"><meta property="article:author" content="ibaosoft"><meta property="article:tag" content="robot"><meta property="article:tag" content="javascript"><meta property="article:tag" content="coffee"><meta name="twitter:card" content="summary"><link rel="canonical" href="http://note.ibaosoft.com/2020/08/31/hubot-scripting/"><script class="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0,lang:"zh-CN"}</script><script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js"></script><title>hubot-scripting | Ibaosoft`s notes</title><script>var _hmt=_hmt||[];!function(){var e=document.createElement("script");e.src="https://hm.baidu.com/hm.js?ae9f64387e60b679255903b65adca271";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}()</script><noscript><style>body{margin-top:2rem}.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header,.use-motion .sidebar{visibility:visible}.use-motion .footer,.use-motion .header,.use-motion .site-brand-container .toggle{opacity:initial}.use-motion .custom-logo-image,.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line{transform:scaleX(1)}.search-pop-overlay,.sidebar-nav{display:none}.sidebar-panel{display:block}</style></noscript></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><main class="main"><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><i class="logo-line"></i><h1 class="site-title">Ibaosoft`s notes</h1><i class="logo-line"></i></a></div><div class="site-nav-right"><div class="toggle popup-trigger"></div></div></div><nav class="site-nav"><ul id="menu" class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">6</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">2</span></a></li><li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li></ul></nav></div><div class="toggle sidebar-toggle"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div><aside class="sidebar"><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class="sidebar-nav"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><section class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E7%BC%96%E5%86%99-%E2%80%93-%E7%BF%BB%E8%AF%91HUBOT%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3"><span class="nav-number">1.</span> <span class="nav-text">脚本编写 – 翻译HUBOT官方文档</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E5%89%96%E6%9E%90"><span class="nav-number">1.1.</span> <span class="nav-text">脚本剖析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%81%86%E5%90%AC%E5%92%8C%E5%9B%9E%E5%BA%94"><span class="nav-number">1.2.</span> <span class="nav-text">聆听和回应</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E5%92%8C%E5%9B%9E%E5%A4%8D"><span class="nav-number">1.3.</span> <span class="nav-text">发送和回复</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E6%B6%88%E6%81%AF%E7%BB%99%E6%88%BF%E9%97%B4%E6%88%96%E8%80%85%E7%94%A8%E6%88%B7"><span class="nav-number">1.4.</span> <span class="nav-text">发送消息给房间或者用户</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%8D%95%E8%8E%B7"><span class="nav-number">1.5.</span> <span class="nav-text">数据捕获</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP%E8%B0%83%E7%94%A8"><span class="nav-number">1.6.</span> <span class="nav-text">HTTP调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JSON"><span class="nav-number">1.7.</span> <span class="nav-text">JSON</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#XML"><span class="nav-number">1.8.</span> <span class="nav-text">XML</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E9%A1%B5%E5%B1%8F%E5%B9%95%E6%8A%93%E5%8F%96%E8%A7%A3%E6%9E%90"><span class="nav-number">1.9.</span> <span class="nav-text">网页屏幕抓取解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E7%9A%84HTTP%E5%92%8CHTTPS%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.10.</span> <span class="nav-text">高级的HTTP和HTTPS设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA"><span class="nav-number">1.11.</span> <span class="nav-text">随机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E9%A2%98"><span class="nav-number">1.12.</span> <span class="nav-text">主题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E5%87%BA"><span class="nav-number">1.13.</span> <span class="nav-text">进出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9B%91%E5%90%AC%E5%99%A8"><span class="nav-number">1.14.</span> <span class="nav-text">自定义监听器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">1.15.</span> <span class="nav-text">环境变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96"><span class="nav-number">1.16.</span> <span class="nav-text">依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B6%85%E6%97%B6%E5%92%8C%E9%97%B4%E9%9A%94"><span class="nav-number">1.17.</span> <span class="nav-text">超时和间隔</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP%E7%9B%91%E5%90%AC%E5%99%A8"><span class="nav-number">1.18.</span> <span class="nav-text">HTTP监听器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6"><span class="nav-number">1.19.</span> <span class="nav-text">事件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">1.20.</span> <span class="nav-text">错误处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.21.</span> <span class="nav-text">文档描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98"><span class="nav-number">1.22.</span> <span class="nav-text">缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD%E8%84%9A%E6%9C%AC"><span class="nav-number">1.23.</span> <span class="nav-text">加载脚本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E8%84%9A%E6%9C%AC"><span class="nav-number">1.24.</span> <span class="nav-text">共享脚本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%92%E4%BB%B6%E8%84%9A%E6%9C%AC%E6%98%AF%E5%90%A6%E5%B7%B2%E7%BB%8F%E5%AD%98%E5%9C%A8"><span class="nav-number">1.25.</span> <span class="nav-text">插件脚本是否已经存在</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%84%9A%E6%9C%ACPackage"><span class="nav-number">1.26.</span> <span class="nav-text">创建脚本Package</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%A6%E5%90%AC%E5%99%A8%E5%85%83%E6%95%B0%E6%8D%AE"><span class="nav-number">1.27.</span> <span class="nav-text">侦听器元数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="nav-number">1.28.</span> <span class="nav-text">中间件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">1.28.1.</span> <span class="nav-text">中间件错误处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%A6%E5%90%AC%E5%99%A8%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="nav-number">1.28.2.</span> <span class="nav-text">侦听器中间件</span></a></li></ol></li></ol></li></ol></div></section><section class="site-overview-wrap sidebar-panel"><div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person"><p class="site-author-name" itemprop="name">ibaosoft</p><div class="site-description" itemprop="description"></div></div><div class="site-state-wrap animated"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">2</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/"><span class="site-state-item-count">3</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">6</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="cc-license animated" itemprop="license"><span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span></div></section></div></aside><div id="sidebar-dimmer"></div></header><div class="back-to-top"><i class="fa fa-arrow-up"></i> <span>0%</span></div><noscript><div id="noscript-warning">Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner"><div class="content post posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="http://note.ibaosoft.com/2020/08/31/hubot-scripting/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar.gif"><meta itemprop="name" content="ibaosoft"><meta itemprop="description" content=""></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="Ibaosoft`s notes"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">hubot-scripting</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2020-08-31 14:54:12" itemprop="dateCreated datePublished" datetime="2020-08-31T14:54:12+08:00">2020-08-31</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar-check"></i> </span><span class="post-meta-item-text">更新于</span> <time title="修改时间：2020-09-03 10:46:59" itemprop="dateModified" datetime="2020-09-03T10:46:59+08:00">2020-09-03</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-folder"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/devops/" itemprop="url" rel="index"><span itemprop="name">devops</span></a> </span></span><span id="/2020/08/31/hubot-scripting/" class="post-meta-item leancloud_visitors" data-flag-title="hubot-scripting" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span class="leancloud-visitors-count"></span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Valine：</span> <a title="valine" href="/2020/08/31/hubot-scripting/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2020/08/31/hubot-scripting/" itemprop="commentCount"></span> </a></span><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>17k</span> </span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="far fa-clock"></i> </span><span class="post-meta-item-text">阅读时长 &asymp;</span> <span>16 分钟</span></span></div></header><div class="post-body" itemprop="articleBody"><h1 id="脚本编写-–-翻译HUBOT官方文档"><a href="#脚本编写-–-翻译HUBOT官方文档" class="headerlink" title="脚本编写 – 翻译HUBOT官方文档"></a>脚本编写 – 翻译HUBOT官方文档</h1><p>本文根据官方文档对照进行的<mark class="label primary">翻译</mark>注释，建议阅读<span class="exturl" data-url="aHR0cHM6Ly9odWJvdC5naXRodWIuY29tL2RvY3Mvc2NyaXB0aW5nLw==">官方文档<i class="fa fa-external-link-alt"></i></span>。</p><p>开箱急用的Hubot并没有做太多，但它是可扩展可编程的机器人。社区编写并维护了数百个脚本，并且自己编写脚本也很容易。您可以在hubot的<code>scripts</code>目录中创建自定义的脚本，也可以创建脚本包(库)并且分享到社区。</p><a id="more"></a><h2 id="脚本剖析"><a href="#脚本剖析" class="headerlink" title="脚本剖析"></a>脚本剖析</h2><p>当您创建Hubot时，生成器还会创建一个<code>scripts</code>目录。如果您查看过那个目录里的脚本，那么您将会看到一些脚本的例子。要想编写属于Hubot的脚本，需要实现以下几点：</p><ul><li>脚本要放置在hubot可识别的加载路径中（默认情况下为 <strong>src/scripts</strong> 或者 <strong>scripts</strong>）</li><li>脚本必须是<code>.coffee</code> 或者<code>.js</code>的文件</li><li>脚本必须要有导出函数</li></ul><p>关于导出函数，我们这么定义的：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">module.exports &#x3D; (robot) -&gt;
+  # your code here<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre><p>这个<code>robot</code>参数是您创建的机器人的一个实例。此时，我们就可以开始编写一些高大上的脚本了。</p><h2 id="聆听和回应"><a href="#聆听和回应" class="headerlink" title="聆听和回应"></a>聆听和回应</h2><p>由于这是一个聊天机器人，因此最常见的交互是基于消息的。Hubot可以<code>hear</code>（听见）在房间中说的消息或者<code>respond</code>（回复）直接在该房间发送的消息。这两种方法都使用正则表达式和回到函数作为参数。例如：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">module.exports &#x3D; (robot) -&gt;
+  robot.hear &#x2F;badger&#x2F;i, (res) -&gt;
+    # your code here
+
+  robot.respond &#x2F;open the pod bay doors&#x2F;i, (res) -&gt;
+    # your code here<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p><code>robot.hear /badger/i</code>只要消息的文本匹配成功，就会调用该回调。例如：</p><ul><li>Stop badgering the witness</li><li>badger me</li><li>what exactly is a badger anyways</li></ul><p><code>robot.respond /open the pod bay doors/i</code>回调仅对紧跟在robot名称或别名前面的消息调用。如果robot的名称为HAL，别名为/，则将触发此回调：</p><ul><li>hal open the pod bay doors</li><li>HAL: open the pod bay doors</li><li>@HAL open the pod bay doors</li><li>/open the pod bay doors</li></ul><p>它将会是这样:</p><ul><li><p>HAL: please open the pod bay doors</p><ul><li>because its respond is bound to the text immediately following the robot name</li></ul></li><li><p>has anyone ever mentioned how lovely you are when you open the pod bay doors?</p><ul><li>because it lacks the robot’s name</li></ul></li></ul><h2 id="发送和回复"><a href="#发送和回复" class="headerlink" title="发送和回复"></a>发送和回复</h2><p>该<code>res</code>参数是的<code>Response</code>的实例（以前，该参数以前是<code>msg</code>，您可能会看到其他脚本以这种方式使用它）。有了它，你可以<code>send</code>给发来消息的房间一个消息，<code>emote</code>一个消息到一个房间（如果给定的适配器支持的话），或<code>reply</code>发送这个消息的人。例如：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">module.exports &#x3D; (robot) -&gt;
+  robot.hear &#x2F;badger&#x2F;i, (res) -&gt;
+    res.send &quot;Badgers? BADGERS? WE DON&#39;T NEED NO STINKIN BADGERS&quot;
+
+  robot.respond &#x2F;open the pod bay doors&#x2F;i, (res) -&gt;
+    res.reply &quot;I&#39;m afraid I can&#39;t let you do that.&quot;
+
+  robot.hear &#x2F;I like pie&#x2F;i, (res) -&gt;
+    res.emote &quot;makes a freshly baked pie&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p><code>The robot.hear /badgers/</code>回调会按照指定的方式发送一条消息，不管是谁说的， “Dave: I’m afraid I can’t let you do that.”</p><h2 id="发送消息给房间或者用户"><a href="#发送消息给房间或者用户" class="headerlink" title="发送消息给房间或者用户"></a>发送消息给房间或者用户</h2><p>可以使用messageRoom函数将消息发送到指定的房间或用户。</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">module.exports &#x3D; (robot) -&gt;
+
+  robot.hear &#x2F;green eggs&#x2F;i, (res) -&gt;
+    room &#x3D; &quot;mytestroom&quot;
+    robot.messageRoom room, &quot;I do not like green eggs and ham.  I do not like them sam-I-am.&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>如果需要，可以明确指定用户名（对于管理员/管理员的抄送），也可以使用响应对象将私人消息发送给原始发件人。</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">robot.respond &#x2F;I don’t like Sam-I-am&#x2F;i, (res) -&gt;
+  room &#x3D;  &#39;joemanager&#39;
+  robot.messageRoom room, &quot;Someone does not like Dr. Seus&quot;
+  res.reply  &quot;That Sam-I-am\nThat Sam-I-am\nI do not like\nthat Sam-I-am&quot;
+
+robot.hear &#x2F;Sam-I-am&#x2F;i, (res) -&gt;
+  room &#x3D;  res.envelope.user.name
+  robot.messageRoom room, &quot;That Sam-I-am\nThat Sam-I-am\nI do not like\nthat Sam-I-am&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><h2 id="数据捕获"><a href="#数据捕获" class="headerlink" title="数据捕获"></a>数据捕获</h2><p>到目前为止，我们的脚本具有静态响应，这些响应虽然很有趣，但在功能方面很无聊。<code>res.match</code>结果是<code>match</code>针对正则表达式对传入消息进行处理。这只是一个<span class="exturl" data-url="aHR0cDovL3d3dy53M3NjaG9vbHMuY29tL2pzcmVmL2pzcmVmX21hdGNoLmFzcA==">JavaScript<i class="fa fa-external-link-alt"></i></span>事物，最终是一个数组，索引为与表达式匹配的全文本，索引为0。如果包括捕获组，则将填充这些捕获组<code>res.match</code>。例如，如果我们更新如下脚本：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">robot.respond &#x2F;open the (.*) doors&#x2F;i, (res) -&gt;
+  # your code here<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre><p>如果Dave说”HAL: open the pod bay doors”，则<code>res.match[0]</code>是”open the pod bay doors”，而<code>res.match[1]</code>只是”pod bay”。现在我们可以开始做更多动态的事情：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">robot.respond &#x2F;open the (.*) doors&#x2F;i, (res) -&gt;
+  doorType &#x3D; res.match[1]
+  if doorType is &quot;pod bay&quot;
+    res.reply &quot;I&#39;m afraid I can&#39;t let you do that.&quot;
+  else
+    res.reply &quot;Opening #&#123;doorType&#125; doors&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><h2 id="HTTP调用"><a href="#HTTP调用" class="headerlink" title="HTTP调用"></a>HTTP调用</h2><p>Hubot可以代表您进行HTTP调用以集成和使用第三方API。这可以通过在以下网址获得的<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3RlY2hub3dlZW5pZS9ub2RlLXNjb3BlZC1odHRwLWNsaWVudA==">node-scoped-http-client<i class="fa fa-external-link-alt"></i></span>实例进行<code>robot.http</code>。最简单的情况如下：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">robot.http(&quot;https:&#x2F;&#x2F;midnight-train&quot;)
+  .get() (err, res, body) -&gt;
+    # your code here<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre><p>下面是一个POST请求例子：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">data &#x3D; JSON.stringify(&#123;
+  foo: &#39;bar&#39;
+&#125;)
+robot.http(&quot;https:&#x2F;&#x2F;midnight-train&quot;)
+  .header(&#39;Content-Type&#39;, &#39;application&#x2F;json&#39;)
+  .post(data) (err, res, body) -&gt;
+    # your code here<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p><code>err</code>是发送错误时的描述。通常您要检查该参数并进行相应的处理：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">robot.http(&quot;https:&#x2F;&#x2F;midnight-train&quot;)
+  .get() (err, res, body) -&gt;
+    if err
+      res.send &quot;Encountered an error :( #&#123;err&#125;&quot;
+      return
+    # your code here, knowing it was successful<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p><code>res</code>是<span class="exturl" data-url="aHR0cDovL25vZGVqcy5vcmcvYXBpL2h0dHAuaHRtbCNodHRwX2NsYXNzX2h0dHBfc2VydmVycmVzcG9uc2U=">http.ServerResponse<i class="fa fa-external-link-alt"></i></span>对象的一个实例。使用<strong>node-scoped-http-client</strong>时，除了<code>statusCode</code>和<code>getHeader</code>大多数方法无关简要。使用<code>statusCode</code>来检查HTTP返回的状态码，通常来说非200的时候就意味着有一些错误。用<code>getHeader</code>做一些检查，例如检查速率的限制：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">robot.http(&quot;https:&#x2F;&#x2F;midnight-train&quot;)
+  .get() (err, res, body) -&gt;
+    # pretend there&#39;s error checking code here
+
+    if res.statusCode isnt 200
+      res.send &quot;Request didn&#39;t come back HTTP 200 :(&quot;
+      return
+
+    rateLimitRemaining &#x3D; parseInt res.getHeader(&#39;X-RateLimit-Limit&#39;) if res.getHeader(&#39;X-RateLimit-Limit&#39;)
+    if rateLimitRemaining and rateLimitRemaining &lt; 1
+      res.send &quot;Rate Limit hit, stop believing for awhile&quot;
+
+    # rest of your code<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p><code>body</code> 是相应的字符串形式的内容，也可能是您最关心的：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">robot.http(&quot;https:&#x2F;&#x2F;midnight-train&quot;)
+  .get() (err, res, body) -&gt;
+    # error checking code here
+
+    res.send &quot;Got back #&#123;body&#125;&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre><h2 id="JSON"><a href="#JSON" class="headerlink" title="JSON"></a>JSON</h2><p>如果您正在使用API​​，那么最简单的方法就是使用JSON，因为它不需要任何额外的依赖关系。进行<code>robot.http</code>调用时，通常应设置<code>Accept</code>标头以为API提供您所期望的提示。获得<code>body</code>后退后，可以使用以下命令进行解析<code>JSON.parse</code>：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">robot.http(&quot;https:&#x2F;&#x2F;midnight-train&quot;)
+  .header(&#39;Accept&#39;, &#39;application&#x2F;json&#39;)
+  .get() (err, res, body) -&gt;
+    # error checking code here
+
+    data &#x3D; JSON.parse body
+    res.send &quot;#&#123;data.passenger&#125; taking midnight train going #&#123;data.destination&#125;&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>有时候它可能不是一个JSON数据，就像调用的API接口发生了某些错误并试图返回一个带有错误描述的HTML。为了安全起见，你应该检查返回的header里的<code>Content-Type</code>，来确定返回的内容解析式捕获各种错误。</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">robot.http(&quot;https:&#x2F;&#x2F;midnight-train&quot;)
+  .header(&#39;Accept&#39;, &#39;application&#x2F;json&#39;)
+  .get() (err, res, body) -&gt;
+    # err &amp; response status checking code here
+
+    if response.getHeader(&#39;Content-Type&#39;) isnt &#39;application&#x2F;json&#39;
+      res.send &quot;Didn&#39;t get back JSON :(&quot;
+      return
+
+    data &#x3D; null
+    try
+      data &#x3D; JSON.parse body
+    catch error
+     res.send &quot;Ran into an error parsing JSON :(&quot;
+     return
+
+    # your code here<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><h2 id="XML"><a href="#XML" class="headerlink" title="XML"></a>XML</h2><p>XML API更难，因为没有捆绑的XML解析库。详细介绍超出了本文档的范围，但是这里有一些要检查的库：</p><ul><li><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2J1Z2xhYnMvbm9kZS14bWwyanNvbg==">xml2json<i class="fa fa-external-link-alt"></i></span>（最简单使用，但有一些限制）</li><li><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3RtcHZhci9qc2RvbQ==">jsdom<i class="fa fa-external-link-alt"></i></span>（W3C DOM的JavaScript实现）</li><li><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL0xlb25pZGFzLWZyb20tWElWL25vZGUteG1sMmpz">xml2js<i class="fa fa-external-link-alt"></i></span></li></ul><h2 id="网页屏幕抓取解析"><a href="#网页屏幕抓取解析" class="headerlink" title="网页屏幕抓取解析"></a>网页屏幕抓取解析</h2><p>对于那些没有API的时代，总是存在屏幕抓取解析的可能性。详细介绍超出了本文档的范围，但是这里有一些需要检查的库：</p><ul><li><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL01hdHRoZXdNdWVsbGVyL2NoZWVyaW8=">cheerio<i class="fa fa-external-link-alt"></i></span>（jQuery的熟悉语法和API）</li><li><span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3RtcHZhci9qc2RvbQ==">jsdom<i class="fa fa-external-link-alt"></i></span>（W3C DOM的JavaScript实现）</li></ul><h2 id="高级的HTTP和HTTPS设置"><a href="#高级的HTTP和HTTPS设置" class="headerlink" title="高级的HTTP和HTTPS设置"></a>高级的HTTP和HTTPS设置</h2><p>如前所述，hubot使用<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3RlY2hub3dlZW5pZS9ub2RlLXNjb3BlZC1odHRwLWNsaWVudA==">node-scoped-http-client<i class="fa fa-external-link-alt"></i></span>来提供用于发出HTTP和HTTPS请求的简单接口。在它的框架下，它使用了node的内置<span class="exturl" data-url="aHR0cDovL25vZGVqcy5vcmcvYXBpL2h0dHAuaHRtbA==">http<i class="fa fa-external-link-alt"></i></span>和<span class="exturl" data-url="aHR0cDovL25vZGVqcy5vcmcvYXBpL2h0dHBzLmh0bWw=">https<i class="fa fa-external-link-alt"></i></span>库，但为最常见的交互提供了简单的DSL。</p><p>如果您需要直接控制http和https上的选项，请将第二个参数传递给<code>robot.http</code>，该参数将传递给<code>node-scoped-http-client</code>，该客户端将传递给http和https：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">options &#x3D;
+  # don&#39;t verify server certificate against a CA, SCARY!
+  rejectUnauthorized: false
+robot.http(&quot;https:&#x2F;&#x2F;midnight-train&quot;, options)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre><p>另外，如果node-scoped-http-client不适合您，则您可以直接使用<span class="exturl" data-url="aHR0cDovL25vZGVqcy5vcmcvYXBpL2h0dHAuaHRtbA==">http<i class="fa fa-external-link-alt"></i></span>和<span class="exturl" data-url="aHR0cDovL25vZGVqcy5vcmcvYXBpL2h0dHBzLmh0bWw=">https<i class="fa fa-external-link-alt"></i></span>或其他任何节点库（例如<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3JlcXVlc3QvcmVxdWVzdA==">request<i class="fa fa-external-link-alt"></i></span>）。</p><h2 id="随机"><a href="#随机" class="headerlink" title="随机"></a>随机</h2><p>一种常见的模式是听或响应命令，并从各种可能性中随机发送有趣的图像或文本行。开箱即用JavaScript和CoffeeScript进行此操作很烦人，因此Hubot提供了一种便捷方法：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">lulz &#x3D; [&#39;lol&#39;, &#39;rofl&#39;, &#39;lmao&#39;]
+
+res.send res.random lulz<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre><h2 id="主题"><a href="#主题" class="headerlink" title="主题"></a>主题</h2><p>假设适配器支持，Hubot可以对房间的主题更改做出反应。</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">module.exports &#x3D; (robot) -&gt;
+  robot.topic (res) -&gt;
+    res.send &quot;#&#123;res.message.text&#125;? That&#39;s a Paddlin&#39;&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre><h2 id="进出"><a href="#进出" class="headerlink" title="进出"></a>进出</h2><p>假设适配器支持，Hubot可以看到用户进入和离开。</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">enterReplies &#x3D; [&#39;Hi&#39;, &#39;Target Acquired&#39;, &#39;Firing&#39;, &#39;Hello friend.&#39;, &#39;Gotcha&#39;, &#39;I see you&#39;]
+leaveReplies &#x3D; [&#39;Are you still there?&#39;, &#39;Target lost&#39;, &#39;Searching&#39;]
+
+module.exports &#x3D; (robot) -&gt;
+  robot.enter (res) -&gt;
+    res.send res.random enterReplies
+  robot.leave (res) -&gt;
+    res.send res.random leaveReplies<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><h2 id="自定义监听器"><a href="#自定义监听器" class="headerlink" title="自定义监听器"></a>自定义监听器</h2><p>尽管以上帮助器涵盖了普通用户所需的大多数功能（听，响应，输入，离开，主题），但有时您希望针对监听器具有非常专业的匹配逻辑。如果是这样，您可以<code>listen</code>用来指定自定义匹配函数，而不是正则表达式。</p><p>如果应执行侦听器回调，则match函数必须返回真实值。然后，将match函数的真实返回值作为<code>response.match</code>传递给回调。</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">module.exports &#x3D; (robot) -&gt;
+  robot.listen(
+    (message) -&gt; # Match function
+      # Occassionally respond to things that Steve says
+      message.user.name is &quot;Steve&quot; and Math.random() &gt; 0.8
+    (response) -&gt; # Standard listener callback
+      # Let Steve know how happy you are that he exists
+      response.reply &quot;HI STEVE! YOU&#39;RE MY BEST FRIEND! (but only like #&#123;response.match * 100&#125;% of the time)&quot;
+  )<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>有关复杂匹配器的示例，请参见<span class="exturl" data-url="aHR0cHM6Ly9odWJvdC5naXRodWIuY29tL2RvY3MvcGF0dGVybnMv">设计模式文档<i class="fa fa-external-link-alt"></i></span>。</p><h2 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h2><p>就像其他任何node程序一样，Hubot可以直接使用<code>process.env</code>访问运行环境的环境变量。这就可以用来配置及哦啊吧的运行方式，惯例是使用<code>HUBOT_</code>前缀。</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">answer &#x3D; process.env.HUBOT_ANSWER_TO_THE_ULTIMATE_QUESTION_OF_LIFE_THE_UNIVERSE_AND_EVERYTHING
+
+module.exports &#x3D; (robot) -&gt;
+  robot.respond &#x2F;what is the answer to the ultimate question of life&#x2F;, (res) -&gt;
+    res.send &quot;#&#123;answer&#125;, but what is the question?&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>如果没有定义脚本，请注意确保它可以加载，最好能够给Hubot开发人员提供如何定义它的注释，或者默认为某个脚本。这取决于脚本编写者来决定这是否是致命的错误（例如Hubbt退出），或者不需要（依赖于它的脚本）需要配置它。在可能的情况下，最好让脚本在没有任何其他配置的情况下也可以正常工作。</p><p>我们给出一个有默认行为的代码：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">answer &#x3D; process.env.HUBOT_ANSWER_TO_THE_ULTIMATE_QUESTION_OF_LIFE_THE_UNIVERSE_AND_EVERYTHING or 42
+
+module.exports &#x3D; (robot) -&gt;
+  robot.respond &#x2F;what is the answer to the ultimate question of life&#x2F;, (res) -&gt;
+    res.send &quot;#&#123;answer&#125;, but what is the question?&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>如果未定义，我们设置为退出：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">answer &#x3D; process.env.HUBOT_ANSWER_TO_THE_ULTIMATE_QUESTION_OF_LIFE_THE_UNIVERSE_AND_EVERYTHING
+unless answer?
+  console.log &quot;Missing HUBOT_ANSWER_TO_THE_ULTIMATE_QUESTION_OF_LIFE_THE_UNIVERSE_AND_EVERYTHING in environment: please set and try again&quot;
+  process.exit(1)
+
+module.exports &#x3D; (robot) -&gt;
+  robot.respond &#x2F;what is the answer to the ultimate question of life&#x2F;, (res) -&gt;
+    res.send &quot;#&#123;answer&#125;, but what is the question?&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>最后，我们更新<code>robot.respond</code>进行检查：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">answer &#x3D; process.env.HUBOT_ANSWER_TO_THE_ULTIMATE_QUESTION_OF_LIFE_THE_UNIVERSE_AND_EVERYTHING
+
+module.exports &#x3D; (robot) -&gt;
+  robot.respond &#x2F;what is the answer to the ultimate question of life&#x2F;, (res) -&gt;
+    unless answer?
+      res.send &quot;Missing HUBOT_ANSWER_TO_THE_ULTIMATE_QUESTION_OF_LIFE_THE_UNIVERSE_AND_EVERYTHING in environment: please set and try again&quot;
+      return
+    res.send &quot;#&#123;answer&#125;, but what is the question?&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><p>Hubot使用<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2lzYWFjcy9ucG0=">npm<i class="fa fa-external-link-alt"></i></span>来管理其依赖项。要添加其他软件包，请将它们添加到dependencies中package.json。例如，添加lolimadeupthispackage 1.2.3，如下：</p><pre class="line-numbers language-coffeeon" data-language="coffeeon"><code class="language-coffeeon">&quot;dependencies&quot;: &#123;
+  &quot;hubot&quot;:         &quot;2.5.5&quot;,
+  &quot;lolimadeupthispackage&quot;: &quot;1.2.3&quot;
+&#125;,<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre><p>如果您使用来自hubot-scripts的脚本，请注意<code>Dependencies</code>要添加的脚本中的文档。它们以可以复制并粘贴到的格式列出<code>package.json</code>，只需确保添加必要的逗号以使其成为有效的JSON。</p><h2 id="超时和间隔"><a href="#超时和间隔" class="headerlink" title="超时和间隔"></a>超时和间隔</h2><p>Hubot可以使用JavaScript内置的<code>setTimeout</code>让代码稍后运行。它需啊哟有一个回到方法，以及调用它之前要等待的时间：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">module.exports &#x3D; (robot) -&gt;
+  robot.respond &#x2F;you are a little slow&#x2F;, (res) -&gt;
+    setTimeout () -&gt;
+      res.send &quot;Who you calling &#39;slow&#39;?&quot;
+    , 60 * 1000<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>此外，Hubot还可以使用<code>setInterval</code>让代码间隔一个时间运行。它也需要一个回调方法，以及连词调用之间要等待的时间：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">module.exports &#x3D; (robot) -&gt;
+  robot.respond &#x2F;annoy me&#x2F;, (res) -&gt;
+    res.send &quot;Hey, want to hear the most annoying sound in the world?&quot;
+    setInterval () -&gt;
+      res.send &quot;AAAAAAAAAAAEEEEEEEEEEEEEEEEEEEEEEEEIIIIIIIIHHHHHHHHHH&quot;
+    , 1000<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>两者<code>setTimeout</code>并<code>setInterval</code>返回其创建的超时或间隔的ID。这可以用于<code>clearTimeout</code>和<code>clearInterval</code>。</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">module.exports &#x3D; (robot) -&gt;
+  annoyIntervalId &#x3D; null
+
+  robot.respond &#x2F;annoy me&#x2F;, (res) -&gt;
+    if annoyIntervalId
+      res.send &quot;AAAAAAAAAAAEEEEEEEEEEEEEEEEEEEEEEEEIIIIIIIIHHHHHHHHHH&quot;
+      return
+
+    res.send &quot;Hey, want to hear the most annoying sound in the world?&quot;
+    annoyIntervalId &#x3D; setInterval () -&gt;
+      res.send &quot;AAAAAAAAAAAEEEEEEEEEEEEEEEEEEEEEEEEIIIIIIIIHHHHHHHHHH&quot;
+    , 1000
+
+  robot.respond &#x2F;unannoy me&#x2F;, (res) -&gt;
+    if annoyIntervalId
+      res.send &quot;GUYS, GUYS, GUYS!&quot;
+      clearInterval(annoyIntervalId)
+      annoyIntervalId &#x3D; null
+    else
+      res.send &quot;Not annoying you right now, am I?&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><h2 id="HTTP监听器"><a href="#HTTP监听器" class="headerlink" title="HTTP监听器"></a>HTTP监听器</h2><p>Hubot包括对<span class="exturl" data-url="aHR0cDovL2V4cHJlc3Nqcy5jb20v">express<i class="fa fa-external-link-alt"></i></span> web框架的支持，以处理HTTP请求。它侦听由<code>EXPRESS_PORT</code>或<code>PORT</code>环境变量指定的端口（按此顺序优先），默认端口为8080。Express应用程序的实例位于<code>robot.router</code>。通过指定<code>EXPRESS_USER</code>和<code>EXPRESS_PASSWORD</code>，可以使用用户名和密码对其进行保护。可以通过设置自动提供静态文件<code>EXPRESS_STATIC</code>。</p><p>此方法最常见的用途是为带有Web钩子的服务提供HTTP端点，以将其推送并显示在聊天室中。</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">module.exports &#x3D; (robot) -&gt;
+  # the expected value of :room is going to vary by adapter, it might be a numeric id, name, token, or some other value
+  robot.router.post &#39;&#x2F;hubot&#x2F;chatsecrets&#x2F;:room&#39;, (req, res) -&gt;
+    room   &#x3D; req.params.room
+    data   &#x3D; if req.body.payload? then JSON.parse req.body.payload else req.body
+    secret &#x3D; data.secret
+
+    robot.messageRoom room, &quot;I have a secret: #&#123;secret&#125;&quot;
+
+    res.send &#39;OK&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>我们用<code>curl</code>进行测试；另请参见下面有关<span class="exturl" data-url="aHR0cHM6Ly9odWJvdC5naXRodWIuY29tL2RvY3Mvc2NyaXB0aW5nLyNlcnJvci1oYW5kbGluZw==">错误处理<i class="fa fa-external-link-alt"></i></span>的部分。</p><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">// raw json, must specify Content-Type: application/json
+<span class="token function">curl</span> -X POST -H <span class="token string">"Content-Type: application/json"</span> -d <span class="token string">'&#123;"secret":"C-TECH Astronomy"&#125;'</span> http://127.0.0.1:8080/hubot/chatsecrets/general
+
+// defaults Content-Type: application/x-www-form-urlencoded, must st <span class="token assign-left variable">payload</span><span class="token operator">=</span><span class="token punctuation">..</span>.
+<span class="token function">curl</span> -d <span class="token string">'payload=%7B%22secret%22%3A%22C-TECH+Astronomy%22%7D'</span> http://127.0.0.1:8080/hubot/chatsecrets/general<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>所有端点URL均应以文字字符串开头<code>/hubot</code>（无论您的机器人名称是什么）。这种一致性使设置Webhooks（可复制粘贴的URL）更加容易，并保证URL有效（并非所有漫游器名称都是URL安全的）。</p><h2 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h2><p>Hubot还可以响应可用于在脚本之间传递数据的事件。这是通过用和封装node.js的<span class="exturl" data-url="aHR0cDovL25vZGVqcy5vcmcvYXBpL2V2ZW50cy5odG1sI2V2ZW50c19jbGFzc19ldmVudHNfZXZlbnRlbWl0dGVy">EventEmitter<i class="fa fa-external-link-alt"></i></span>来完成的。使用的是<code>robot.emit</code>和<code>robot.on</code>。</p><p>一个用例是拥有一个脚本来处理与服务的交互，然后在事件发生时发出事件。例如，我们可以有一个脚本，该脚本从GitHub后提交钩子接收数据，使它们在传入时发出提交，然后让另一个脚本对这些提交进行操作。</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee"># src&#x2F;scripts&#x2F;github-commits.coffee
+module.exports &#x3D; (robot) -&gt;
+  robot.router.post &quot;&#x2F;hubot&#x2F;gh-commits&quot;, (req, res) -&gt;
+    robot.emit &quot;commit&quot;, &#123;
+        user    : &#123;&#125;, #hubot user object
+        repo    : &#39;https:&#x2F;&#x2F;github.com&#x2F;github&#x2F;hubot&#39;,
+        hash  : &#39;2e1951c089bd865839328592ff673d2f08153643&#39;
+    &#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee"># src&#x2F;scripts&#x2F;heroku.coffee
+module.exports &#x3D; (robot) -&gt;
+  robot.on &quot;commit&quot;, (commit) -&gt;
+    robot.send commit.user, &quot;Will now deploy #&#123;commit.hash&#125; from #&#123;commit.repo&#125;!&quot;
+    #deploy code goes here<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>如果您提供事件，则强烈建议在其数据中包含hubot用户或房间对象。这将允许hubot通知用户或聊天室。</p><h2 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理"></a>错误处理</h2><p>没有代码是完美的，并且错误和异常是可以预期的。以前，未捕获的异常会使您的hubot实例崩溃。但是现在Hubot包括一个<code>uncaughtException</code>处理程序，该处理程序为脚本提供了挂钩以对异常执行某些操作。</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee"># src&#x2F;scripts&#x2F;does-not-compute.coffee
+module.exports &#x3D; (robot) -&gt;
+  robot.error (err, res) -&gt;
+    robot.logger.error &quot;DOES NOT COMPUTE&quot;
+
+    if res?
+      res.reply &quot;DOES NOT COMPUTE&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>您可以在此处执行任何操作，但是您将需要特别注意挽救和记录错误，尤其是异步代码。否则，您可能会发现自己遇到了递归错误，并且不知道发生了什么。</p><p>在后台，发出了一个“错误”事件，而错误处理程序将消耗该事件。从技术上讲，uncaughtException处理程序使进程处于未知状态。因此，您应该尽可能地挽救自己的异常，并自行发出它们。第一个参数是发出的错误，第二个参数是生成错误的可选消息。</p><p>使用前面的示例：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">robot.router.post &#39;&#x2F;hubot&#x2F;chatsecrets&#x2F;:room&#39;, (req, res) -&gt;
+  room &#x3D; req.params.room
+  data &#x3D; null
+  try
+    data &#x3D; JSON.parse req.body.payload
+  catch err
+    robot.emit &#39;error&#39;, err
+
+  # rest of the code here
+
+
+robot.hear &#x2F;midnight train&#x2F;i, (res) -&gt;
+  robot.http(&quot;https:&#x2F;&#x2F;midnight-train&quot;)
+    .get() (err, res, body) -&gt;
+      if err
+        res.reply &quot;Had problems taking the midnight train&quot;
+        robot.emit &#39;error&#39;, err, res
+        return
+      # rest of code here<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>对于第二个示例，值得考虑是用户将看到哪些消息。如果您捕获了一个错误并且要回复这个用户，则可能不需要添加自定义消息并可以发回提供给get()请求的错误消息，当然，这取决于您要在异常测处理要求。</p><h2 id="文档描述"><a href="#文档描述" class="headerlink" title="文档描述"></a>文档描述</h2><p>Hubot脚本可以在文件顶部使用带有注释的文本作为文档描述，例如：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee"># Description:
+#   &lt;description of the scripts functionality&gt;
+#
+# Dependencies:
+#   &quot;&lt;module name&gt;&quot;: &quot;&lt;module version&gt;&quot;
+#
+# Configuration:
+#   LIST_OF_ENV_VARS_TO_SET
+#
+# Commands:
+#   hubot &lt;trigger&gt; - &lt;what the respond trigger does&gt;
+#   &lt;trigger&gt; - &lt;what the hear trigger does&gt;
+#
+# Notes:
+#   &lt;optional notes required for the script&gt;
+#
+# Author:
+#   &lt;github username of the original script author&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>其中最重要的也是面向用户的是命令。在加载时，Hubot会查看<code>Commands</code>每个脚本的部分，并构建所有命令的列表。包含的内容<code>help.coffee</code>使用户可以跨所有命令或通过搜索寻求帮助。因此，记录命令可以使用户更容易发现它们。</p><p>在编写文档时，一下是一些最佳的做法：</p><ul><li>停留在一条线上。帮助命令经过排序，因此会将第二行插入一个意想不到的位置，该位置可能没有意义。</li><li>将Hubot称为Hubot，即使您的Hubot被命名为其他名称也是如此。它将自动替换为正确的名称。这使得共享脚本更容易，而无需更新文档。</li><li>对于<code>robot.respond</code>文档，请始终以开头hubot。Hubot会自动将其替换为您的机器人名称，如果有一个，则为机器人的别名。</li><li>查看手册页如何记录自己。特别是，括号表示可选部分，“ …”表示任意数量的参数，等等。</li></ul><p>其他部分与机器人的开发人员更相关，尤其是依赖项，配置变量和注释。对hubot脚本的所有贡献都应包括与启动和运行脚本有关的所有这些部分。</p><h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><p>Gubot公开了一个内存中的键值存储robot.brain，可用于通过脚本存储和检索数据。</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">robot.respond &#x2F;have a soda&#x2F;i, (res) -&gt;
+  # Get number of sodas had (coerced to a number).
+  sodasHad &#x3D; robot.brain.get(&#39;totalSodas&#39;) * 1 or 0
+
+  if sodasHad &gt; 4
+    res.reply &quot;I&#39;m too fizzy..&quot;
+
+  else
+    res.reply &#39;Sure!&#39;
+
+    robot.brain.set &#39;totalSodas&#39;, sodasHad+1
+robot.respond &#x2F;sleep it off&#x2F;i, (res) -&gt;
+  robot.brain.set &#39;totalSodas&#39;, 0
+  msg.reply &#39;zzzzz&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>如果脚本需要查找的用户数据，则对方法<code>robot.brain</code>用于查找一个或多个用户可以通过ID，名称或名称的“模糊”匹配：<code>userForName</code>，<code>userForId</code>，<code>userForFuzzyName</code>，和<code>usersForFuzzyName</code>。</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">module.exports &#x3D; (robot) -&gt;
+
+  robot.respond &#x2F;who is @?([\w .\-]+)\?*$&#x2F;i, (res) -&gt;
+    name &#x3D; res.match[1].trim()
+
+    users &#x3D; robot.brain.usersForFuzzyName(name)
+    if users.length is 1
+      user &#x3D; users[0]
+      # Do something interesting here..
+
+      res.send &quot;#&#123;name&#125; is user - #&#123;user&#125;&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><h2 id="加载脚本"><a href="#加载脚本" class="headerlink" title="加载脚本"></a>加载脚本</h2><p>有三种加载脚本的方式：</p><ul><li>目录下与hubot安装捆绑在一起的所有脚本scripts/</li><li>npm软件包中指定<code>hubot-scripts.json</code>并随附的社区脚本<code>hubot-scripts</code></li><li>从外部<strong>npm程序包</strong>加载并在<code>external-scripts.json</code></li></ul><p>从<code>scripts/</code>目录加载的脚本按字母顺序加载，因此可以期望脚本的加载顺序一致。例如：</p><ul><li>scripts/1-first.coffee</li><li>scripts/_second.coffee</li><li>scripts/third.coffee</li></ul><h2 id="共享脚本"><a href="#共享脚本" class="headerlink" title="共享脚本"></a>共享脚本</h2><p>一旦构建了一些新脚本来扩展您的机器人的能力，您就应该考虑与世界分享这些脚本！至少，您需要打包脚本并将其提交到<span class="exturl" data-url="aHR0cDovL25wbWpzLm9yZy8=">Node.js Package Registry<i class="fa fa-external-link-alt"></i></span>。您还应该在下面查看共享脚本的最佳做法。</p><h2 id="插件脚本是否已经存在"><a href="#插件脚本是否已经存在" class="headerlink" title="插件脚本是否已经存在"></a>插件脚本是否已经存在</h2><p>首先检查是否已存在类似您的脚本的NPM软件包。如果看不到可提供的现有软件包，则可以使用hubot脚本<span class="exturl" data-url="aHR0cDovL3llb21hbi5pby8=">yeoman<i class="fa fa-external-link-alt"></i></span>生成器轻松入门。</p><h2 id="创建脚本Package"><a href="#创建脚本Package" class="headerlink" title="创建脚本Package"></a>创建脚本Package</h2><p>为hubot创建脚本包非常简单。首先安装<code>hubot</code> 为hubot创建脚本包非常简单。首先安装hubot yeoman生成器：生成器：</p><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">% <span class="token function">npm</span> <span class="token function">install</span> -g yo generator-hubot<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre><p>一旦安装了Hubot生成器，创建Hubot脚本就类似于创建新的Hubot。您为hubot脚本创建目录并<code>hubot:script</code>在其中生成新目录。例如，如果我们想创建一个名为“my-awesome-script”的hubot脚本：</p><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">% <span class="token function">mkdir</span> hubot-my-awesome-script
+% <span class="token builtin class-name">cd</span> hubot-my-awesome-script
+% yo hubot:script<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre><p>此时，系统将询问您一些有关脚本作者，脚本名称（由目录名称猜测），简短说明以及用于查找脚本的关键字的问题（建议您至少hubot, hubot-scripts在此清单）。</p><p>如果使用git，则生成的目录包含.gitignore，因此您可以初始化并添加所有内容：</p><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">% <span class="token function">git</span> init
+% <span class="token function">git</span> <span class="token function">add</span> <span class="token builtin class-name">.</span>
+% <span class="token function">git</span> commit -m <span class="token string">"Initial commit"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre><p>现在，您已经可以使用Hubot脚本存储库了！随意打开预先创建的<code>src/awesome-script.coffee</code>文件并开始构建脚本！当你得到它准备好了，你可以将它发布到<span class="exturl" data-url="aHR0cDovL25wbWpzLm9yZy8=">npmjs<i class="fa fa-external-link-alt"></i></span>通过<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLm5wbWpzLmNvbS9nZXR0aW5nLXN0YXJ0ZWQvcHVibGlzaGluZy1ucG0tcGFja2FnZXM=">以下的文件<i class="fa fa-external-link-alt"></i></span>！</p><h2 id="侦听器元数据"><a href="#侦听器元数据" class="headerlink" title="侦听器元数据"></a>侦听器元数据</h2><p>除了正则表达式和回调外，hear和respond函数还接受可选选项Object，可用于将任意元数据附加到生成的Listener对象。此元数据可轻松扩展脚本的行为，而无需修改脚本包。</p><p>最重要和最常见的元数据键是id。应该为每个侦听器指定一个唯一的名称（options.id；默认为null）。名称应按模块确定范围（例如“ my-module.my-listener”）。这些名称允许其他脚本直接寻址各个侦听器，并通过授权和速率限制等其他功能对其进行扩展。</p><p>其他扩展可以定义和处理其他元数据键。有关更多信息，请参见<span class="exturl" data-url="aHR0cHM6Ly9odWJvdC5naXRodWIuY29tL2RvY3Mvc2NyaXB0aW5nLyNsaXN0ZW5lci1taWRkbGV3YXJl">侦听器中间件部分<i class="fa fa-external-link-alt"></i></span>。</p><p>回到前面的示例：</p><pre class="line-numbers language-coffee" data-language="coffee"><code class="language-coffee">module.exports &#x3D; (robot) -&gt;
+  robot.respond &#x2F;annoy me&#x2F;, id:&#39;annoyance.start&#39;, (msg)
+    # code to annoy someone
+
+  robot.respond &#x2F;unannoy me&#x2F;, id:&#39;annoyance.stop&#39;, (msg)
+    # code to stop annoying someone<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>这些作用域标识符使您可以在外部指定新行为，例如：</p><ul><li>授权策略: “allow everyone in the annoyers group to execute annoyance.* commands”</li><li>速率限制: “only allow executing annoyance.start once every 30 minutes”</li></ul><h2 id="中间件"><a href="#中间件" class="headerlink" title="中间件"></a>中间件</h2><p>共有三种中间件：接收，侦听器和响应。</p><p>接收中间件运行一次，然后再检查侦听器。侦听器中间件针对与消息匹配的每个侦听器运行。响应中间件针对发送到消息的每个响应运行。</p><p>##　执行过程和API</p><p>类似于<span class="exturl" data-url="aHR0cDovL2V4cHJlc3Nqcy5jb20vYXBpLmh0bWwjbWlkZGxld2FyZQ==">Express 中间件<i class="fa fa-external-link-alt"></i></span>，Hubot按照定义的顺序执行中间件。每一个中间件都能继续执行下一个中间件（通过调用<code>next</code>）或者中断（通过调用<code>done</code>）。如果所有中间件都继续，那么会执行<code>done</code>并且回调监听。中间件可以宝桩该<code>done</code>回调，并允许在过程的后半部分执行代码（在执行侦听器回调或者更审查的中间件中断之后）。</p><p>调用中间件：</p><ul><li>context<ul><li>查看每种中间件类型的API，已了解上下文将公开的内容。</li></ul></li><li>next<ul><li>一个没有附加属性的函数，应调用该函数来继续进行下一个中间件/执行Listener回调</li><li>next应该使用单个可选参数调用：提供的done函数或最终调用的新函数done。如果未提供参数，done则将嘉定提供了该参数。</li></ul></li><li>done</li><li>一个没有附加属性的函数，应该调用该函数来中断中间件的执行并开始执行完成的函数链</li><li>done应该没有参数的调用</li></ul><p>每一个中间件接收相同的API签名<code>context</code>，<code>next</code>和<code>done</code>。不同种类的中间件可能在<code>context</code>对象中接收不同的信息。有关更改单详细信息，请参见每种中间件的API。</p><h3 id="中间件错误处理"><a href="#中间件错误处理" class="headerlink" title="中间件错误处理"></a>中间件错误处理</h3><p>对于同步中间件（永远不会屈服于时间循环），<code>error</code>就像标准侦听器一样，hubot将自动捕获错误并发出时间。Hubot还将自动调用最新的<code>done</code>回调以展开中间件堆栈。异步中间件应该捕获自己的异常，发出<code>error</code>事件，然后调用<code>done</code>。任何未捕获的异常都将中断中间件完成回调的所有执行。</p><h3 id="侦听器中间件"><a href="#侦听器中间件" class="headerlink" title="侦听器中间件"></a>侦听器中间件</h3><p>侦听器中间件在匹配消息的侦听器与执行侦听器之间插入逻辑。这使您可以创建针对每个匹配脚本运行的扩展。示例包括几种授权策略，速度限制，日志记录和指标。中间件的实现与其他hubot脚本一样：代替使用<code>hear</code>和<code>respond</code>方法，而是使用来注册中间件<code>listenerMiddleware</code>。</p></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者： </strong>ibaosoft</li><li class="post-copyright-link"><strong>本文链接：</strong> <a href="http://note.ibaosoft.com/2020/08/31/hubot-scripting/" title="hubot-scripting">http://note.ibaosoft.com/2020/08/31/hubot-scripting/</a></li><li class="post-copyright-license"><strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！</li></ul></div><footer class="post-footer"><div class="post-tags"><a href="/tags/robot/" rel="tag"><i class="fa fa-tag"></i> robot</a> <a href="/tags/javascript/" rel="tag"><i class="fa fa-tag"></i> javascript</a> <a href="/tags/coffee/" rel="tag"><i class="fa fa-tag"></i> coffee</a></div><div class="post-nav"><div class="post-nav-item"></div><div class="post-nav-item"><a href="/2020/09/18/leetcode-binary-tree-generator/" rel="next" title="Leetcode 二叉树生成及转换成数组的工具包">Leetcode 二叉树生成及转换成数组的工具包 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><div class="tabs tabs-comment"><ul class="nav-tabs"><li class="tab"><a href="#comment-gitalk">gitalk</a></li><li class="tab"><a href="#comment-valine">valine</a></li></ul><div class="tab-content"><div class="tab-pane gitalk" id="comment-gitalk"><div class="comments" id="gitalk-container"></div></div><div class="tab-pane valine" id="comment-valine"><div class="comments" id="valine-comments"></div></div></div></div><script>window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }</script></div></main><footer class="footer"><div class="footer-inner"><div class="copyright">&copy; <span itemprop="copyrightYear">2020</span> <span class="with-love"><i class="fa fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">ibaosoft</span> <span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-chart-area"></i> </span><span class="post-meta-item-text">站点总字数：</span> <span title="站点总字数">21k</span> <span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-coffee"></i> </span><span class="post-meta-item-text">站点阅读时长 &asymp;</span> <span title="站点阅读时长">19 分钟</span></div><div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZw==">NexT.Gemini</span> 强力驱动</div><script>(function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"fJNe6ui7aIFd9PiI6TwLDLjA-gzGzoHsz","app_key":"IniJbw5H2hQBchgAzg3WYrMq","server_url":"https://fjne6ui7.lc-cn-n1-shared.com","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();</script></div></footer></div><script src="/lib/anime.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script>!function(){var t=document.createElement("script"),e=window.location.protocol.split(":")[0];t.src="https"===e?"https://zz.bdstatic.com/linksubmit/push.js":"http://push.zhanzhang.baidu.com/push.js";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}()</script><script>if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}</script><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css"><script>NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '5536dd8f7dba92c4985e',
+      clientSecret: '69f5efc407d68e7cc7668306543a2f24d3dbac40',
+      repo        : 'ibaosoft.github.io',
+      owner       : 'ibaosoft',
+      admin       : ['ibaosoft'],
+      id          : '6326e4ff5b3867cc31233158ab92952d',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});</script><script>NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: location.pathname,
+    }, {"enable":true,"appId":"fJNe6ui7aIFd9PiI6TwLDLjA-gzGzoHsz","appKey":"IniJbw5H2hQBchgAzg3WYrMq","placeholder":"请填写您的昵称和邮箱哦，邮箱不会被公开显示呐","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"language":"zh-cn","visitor":false,"comment_count":false,"recordIP":false,"serverURLs":null,"enableQQ":false,"requiredFields":["nick","mail"]}
+    ));
+  }, window.Valine);
+});</script></body></html>

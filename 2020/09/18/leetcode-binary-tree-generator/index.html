@@ -1,0 +1,298 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.1.1"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png"><link rel="mask-icon" href="/images/logo.svg" color="#222"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="baidu-site-verification" content="MtfwxbBjfK"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext"><link rel="stylesheet" href="/lib/font-awesome/css/all.min.css"><link rel="stylesheet" href="/lib/animate-css/animate.min.css"><script class="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"note.ibaosoft.com",root:"/",scheme:"Gemini",version:"8.0.0-rc.5",exturl:!0,sidebar:{position:"left",display:"post",padding:18,offset:12},copycode:!0,bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!1,mediumzoom:!1,lazyload:!1,pangu:!1,comments:{style:"tabs",active:"gitalk",storage:!0,lazyload:!0,nav:{gitalk:{order:-1},valine:{order:-1}},activeClass:"gitalk"},motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"fadeInDown",post_body:"fadeInDown",coll_header:"fadeInLeft",sidebar:"fadeInUp"}},prism:!1}</script><meta name="description" content="我们 Leetcode 刷题应该是每个程序员小伙伴都会经历的一个状态，但当每次遇到二叉树相关的题目时，实现函数虽然写完了，想自己在本地 IDE 中做好充分的验证的话，还是会有一些麻烦的。 尤其是写测试用例时是根据 Leetcode 官方的数组格式进行设置传入二叉树结构，但是数组类型转成二叉树结构就写的有点蛋疼了。也就是二叉树结构的序列化为数组和数组反序列化为二叉树结构问题了，总不能每次遇到时临时写"><meta property="og:type" content="article"><meta property="og:title" content="Leetcode 二叉树生成及转换成数组的工具包"><meta property="og:url" content="http://note.ibaosoft.com/2020/09/18/leetcode-binary-tree-generator/"><meta property="og:site_name" content="Ibaosoft&#96;s notes"><meta property="og:description" content="我们 Leetcode 刷题应该是每个程序员小伙伴都会经历的一个状态，但当每次遇到二叉树相关的题目时，实现函数虽然写完了，想自己在本地 IDE 中做好充分的验证的话，还是会有一些麻烦的。 尤其是写测试用例时是根据 Leetcode 官方的数组格式进行设置传入二叉树结构，但是数组类型转成二叉树结构就写的有点蛋疼了。也就是二叉树结构的序列化为数组和数组反序列化为二叉树结构问题了，总不能每次遇到时临时写"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2020-09-18T11:01:12.000Z"><meta property="article:modified_time" content="2020-10-14T10:00:01.057Z"><meta property="article:author" content="ibaosoft"><meta property="article:tag" content="golang"><meta property="article:tag" content="binary tree"><meta property="article:tag" content="DFS"><meta name="twitter:card" content="summary"><link rel="canonical" href="http://note.ibaosoft.com/2020/09/18/leetcode-binary-tree-generator/"><script class="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0,lang:"zh-CN"}</script><script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js"></script><title>Leetcode 二叉树生成及转换成数组的工具包 | Ibaosoft`s notes</title><script>var _hmt=_hmt||[];!function(){var e=document.createElement("script");e.src="https://hm.baidu.com/hm.js?ae9f64387e60b679255903b65adca271";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}()</script><noscript><style>body{margin-top:2rem}.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header,.use-motion .sidebar{visibility:visible}.use-motion .footer,.use-motion .header,.use-motion .site-brand-container .toggle{opacity:initial}.use-motion .custom-logo-image,.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line{transform:scaleX(1)}.search-pop-overlay,.sidebar-nav{display:none}.sidebar-panel{display:block}</style></noscript></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><main class="main"><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><i class="logo-line"></i><h1 class="site-title">Ibaosoft`s notes</h1><i class="logo-line"></i></a></div><div class="site-nav-right"><div class="toggle popup-trigger"></div></div></div><nav class="site-nav"><ul id="menu" class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">6</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">2</span></a></li><li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li></ul></nav></div><div class="toggle sidebar-toggle"><span class="toggle-line"></span> <span class="toggle-line"></span> <span class="toggle-line"></span></div><aside class="sidebar"><div class="sidebar-inner sidebar-nav-active sidebar-toc-active"><ul class="sidebar-nav"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><section class="post-toc-wrap sidebar-panel"><div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E6%A0%87%E5%87%86%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">二叉树标准结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84-Null-%E6%95%B4%E5%BD%A2%E5%B8%B8%E9%87%8F"><span class="nav-number">2.</span> <span class="nav-text">自定义的 Null 整形常量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E4%BA%8C%E5%8F%89%E6%A0%91%E6%9C%80%E5%A4%A7%E6%B7%B1%E5%BA%A6"><span class="nav-number">3.</span> <span class="nav-text">计算二叉树最大深度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E6%95%B0%E7%BB%84%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%BA%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">4.</span> <span class="nav-text">二叉树数组反序列化为二叉树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%BA%E4%BA%8C%E5%8F%89%E6%A0%91%E6%95%B0%E7%BB%84"><span class="nav-number">5.</span> <span class="nav-text">二叉树序列化为二叉树数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E6%95%B0%E7%BB%84%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%87%BALeetcode%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%BB%93%E6%9E%84"><span class="nav-number">6.</span> <span class="nav-text">二叉树数组格式化输出Leetcode字符串结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95-Example"><span class="nav-number">7.</span> <span class="nav-text">测试 Example</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81%E5%9C%B0%E5%9D%80"><span class="nav-number">8.</span> <span class="nav-text">完整代码地址</span></a></li></ol></div></section><section class="site-overview-wrap sidebar-panel"><div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person"><p class="site-author-name" itemprop="name">ibaosoft</p><div class="site-description" itemprop="description"></div></div><div class="site-state-wrap animated"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">2</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/"><span class="site-state-item-count">3</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">6</span> <span class="site-state-item-name">标签</span></a></div></nav></div><div class="cc-license animated" itemprop="license"><span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span></div></section></div></aside><div id="sidebar-dimmer"></div></header><div class="back-to-top"><i class="fa fa-arrow-up"></i> <span>0%</span></div><noscript><div id="noscript-warning">Theme NexT works best with JavaScript enabled</div></noscript><div class="main-inner"><div class="content post posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="http://note.ibaosoft.com/2020/09/18/leetcode-binary-tree-generator/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar.gif"><meta itemprop="name" content="ibaosoft"><meta itemprop="description" content=""></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="Ibaosoft`s notes"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Leetcode 二叉树生成及转换成数组的工具包</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2020-09-18 19:01:12" itemprop="dateCreated datePublished" datetime="2020-09-18T19:01:12+08:00">2020-09-18</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar-check"></i> </span><span class="post-meta-item-text">更新于</span> <time title="修改时间：2020-10-14 18:00:01" itemprop="dateModified" datetime="2020-10-14T18:00:01+08:00">2020-10-14</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-folder"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/leetcode/" itemprop="url" rel="index"><span itemprop="name">leetcode</span></a> </span>， <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/leetcode/algorithm/" itemprop="url" rel="index"><span itemprop="name">algorithm</span></a> </span></span><span id="/2020/09/18/leetcode-binary-tree-generator/" class="post-meta-item leancloud_visitors" data-flag-title="Leetcode 二叉树生成及转换成数组的工具包" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span class="leancloud-visitors-count"></span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-comment"></i> </span><span class="post-meta-item-text">Valine：</span> <a title="valine" href="/2020/09/18/leetcode-binary-tree-generator/#valine-comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2020/09/18/leetcode-binary-tree-generator/" itemprop="commentCount"></span> </a></span><span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="far fa-file-word"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>3.4k</span> </span><span class="post-meta-item" title="阅读时长"><span class="post-meta-item-icon"><i class="far fa-clock"></i> </span><span class="post-meta-item-text">阅读时长 &asymp;</span> <span>3 分钟</span></span></div></header><div class="post-body" itemprop="articleBody"><p>我们 <span class="exturl" data-url="aHR0cHM6Ly9sZWV0Y29kZS1jbi5jb20v">Leetcode<i class="fa fa-external-link-alt"></i></span> 刷题应该是每个程序员小伙伴都会经历的一个状态，但当每次遇到二叉树相关的题目时，实现函数虽然写完了，想自己在本地 IDE 中做好充分的验证的话，还是会有一些麻烦的。</p><p>尤其是写测试用例时是根据 Leetcode 官方的数组格式进行设置传入二叉树结构，但是数组类型转成二叉树结构就写的有点蛋疼了。也就是二叉树结构的序列化为数组和数组反序列化为二叉树结构问题了，总不能每次遇到时临时写一坨坨的代码吧，所以就有了下面基于 <code>Golang</code> 语言实现的一个简单版本。</p><p>为啥要在本地写单元测试，Leetcode 有控制台，贴上去运行呀。的确可以这么做，但还是不方便，并且你也不想每次提交之后都是未通过吧，这样会显得我们写的代码很烂[机制boy]。</p><a id="more"></a><p>话不多说，上代码先：</p><h2 id="二叉树标准结构"><a href="#二叉树标准结构" class="headerlink" title="二叉树标准结构"></a>二叉树标准结构</h2><pre class="line-numbers language-go" data-language="go"><code class="language-go"><span class="token comment">// TreeNode Definition for a binary tree node</span>
+<span class="token keyword">type</span> TreeNode <span class="token keyword">struct</span> <span class="token punctuation">&#123;</span>
+    Val   <span class="token builtin">int</span>       <span class="token string">`json:"val"`</span>
+    Left  <span class="token operator">*</span>TreeNode <span class="token string">`json:"left,omitempty"`</span>
+    Right <span class="token operator">*</span>TreeNode <span class="token string">`json:"right,omitempty"`</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><h2 id="自定义的-Null-整形常量"><a href="#自定义的-Null-整形常量" class="headerlink" title="自定义的 Null 整形常量"></a>自定义的 Null 整形常量</h2><pre class="line-numbers language-go" data-language="go"><code class="language-go"><span class="token comment">// Null 自定义常量`Null[MinInt32]`标识的元素解释为nil节点</span>
+<span class="token keyword">const</span> Null <span class="token builtin">int</span> <span class="token operator">=</span> math<span class="token punctuation">.</span>MinInt32<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre><h2 id="计算二叉树最大深度"><a href="#计算二叉树最大深度" class="headerlink" title="计算二叉树最大深度"></a>计算二叉树最大深度</h2><pre class="line-numbers language-go" data-language="go"><code class="language-go"><span class="token comment">// Depth 获取二叉树最大深度</span>
+<span class="token keyword">func</span> <span class="token function">Depth</span><span class="token punctuation">(</span>root <span class="token operator">*</span>TreeNode<span class="token punctuation">)</span> <span class="token builtin">int</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">var</span> depthF <span class="token keyword">func</span><span class="token punctuation">(</span>root <span class="token operator">*</span>TreeNode<span class="token punctuation">)</span> <span class="token builtin">float64</span>
+    depthF <span class="token operator">=</span> <span class="token keyword">func</span><span class="token punctuation">(</span>root <span class="token operator">*</span>TreeNode<span class="token punctuation">)</span> <span class="token builtin">float64</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">if</span> root <span class="token operator">==</span> <span class="token boolean">nil</span> <span class="token punctuation">&#123;</span>
+            <span class="token keyword">return</span> <span class="token number">0</span>
+        <span class="token punctuation">&#125;</span>
+
+        <span class="token keyword">return</span> math<span class="token punctuation">.</span><span class="token function">Max</span><span class="token punctuation">(</span><span class="token function">depthF</span><span class="token punctuation">(</span>root<span class="token punctuation">.</span>Left<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">depthF</span><span class="token punctuation">(</span>root<span class="token punctuation">.</span>Right<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token number">1</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">return</span> <span class="token function">int</span><span class="token punctuation">(</span><span class="token function">depthF</span><span class="token punctuation">(</span>root<span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><h2 id="二叉树数组反序列化为二叉树"><a href="#二叉树数组反序列化为二叉树" class="headerlink" title="二叉树数组反序列化为二叉树"></a>二叉树数组反序列化为二叉树</h2><pre class="line-numbers language-go" data-language="go"><code class="language-go"><span class="token comment">// Unmarshal 将整形切片反序列化为标准二叉树结构对象，其中自定义常量`Null[MinInt32]`标识的元素解释为nil节点</span>
+<span class="token comment">//</span>
+<span class="token comment">// 输入：nums = [5,4,8,11,null,13,4,7,2,null,null,5,1]</span>
+<span class="token comment">//</span>
+<span class="token comment">// 输出（图形化结构）:</span>
+<span class="token comment">//</span>
+<span class="token comment">//                5</span>
+<span class="token comment">//              /   \</span>
+<span class="token comment">//             4     8</span>
+<span class="token comment">//            / \   / \</span>
+<span class="token comment">//           11 nl 13  4</span>
+<span class="token comment">//          / \   / \  / \</span>
+<span class="token comment">//         7   2 nl nl 5  1</span>
+<span class="token comment">//</span>
+<span class="token keyword">func</span> <span class="token function">Unmarshal</span><span class="token punctuation">(</span>nums <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token operator">*</span>TreeNode <span class="token punctuation">&#123;</span>
+    <span class="token keyword">if</span> <span class="token function">len</span><span class="token punctuation">(</span>nums<span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">0</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> <span class="token boolean">nil</span>
+    <span class="token punctuation">&#125;</span>
+
+    root <span class="token operator">:=</span> <span class="token function">new</span><span class="token punctuation">(</span>TreeNode<span class="token punctuation">)</span>
+    root<span class="token punctuation">.</span>Val <span class="token operator">=</span> nums<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+
+    queue <span class="token operator">:=</span> list<span class="token punctuation">.</span><span class="token function">New</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    queue<span class="token punctuation">.</span><span class="token function">PushFront</span><span class="token punctuation">(</span>root<span class="token punctuation">)</span>
+
+    <span class="token keyword">for</span> i <span class="token operator">:=</span> <span class="token number">0</span><span class="token punctuation">;</span> queue<span class="token punctuation">.</span><span class="token function">Len</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span> <span class="token operator">&amp;&amp;</span> i <span class="token operator">&lt;</span> <span class="token function">len</span><span class="token punctuation">(</span>nums<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token punctuation">&#123;</span>
+        element <span class="token operator">:=</span> queue<span class="token punctuation">.</span><span class="token function">Back</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        queue<span class="token punctuation">.</span><span class="token function">Remove</span><span class="token punctuation">(</span>element<span class="token punctuation">)</span>
+
+        cur <span class="token operator">:=</span> element<span class="token punctuation">.</span>Value<span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token operator">*</span>TreeNode<span class="token punctuation">)</span>
+        <span class="token keyword">if</span> cur<span class="token punctuation">.</span>Val <span class="token operator">==</span> Null <span class="token punctuation">&#123;</span>
+            <span class="token keyword">continue</span>
+        <span class="token punctuation">&#125;</span>
+
+        <span class="token keyword">if</span> i<span class="token operator">++</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token function">len</span><span class="token punctuation">(</span>nums<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            left <span class="token operator">:=</span> <span class="token function">new</span><span class="token punctuation">(</span>TreeNode<span class="token punctuation">)</span>
+            left<span class="token punctuation">.</span>Val <span class="token operator">=</span> nums<span class="token punctuation">[</span>i<span class="token punctuation">]</span>
+            <span class="token keyword">if</span> left<span class="token punctuation">.</span>Val <span class="token operator">!=</span> Null <span class="token punctuation">&#123;</span>
+                cur<span class="token punctuation">.</span>Left <span class="token operator">=</span> left
+            <span class="token punctuation">&#125;</span>
+            queue<span class="token punctuation">.</span><span class="token function">PushFront</span><span class="token punctuation">(</span>left<span class="token punctuation">)</span>
+        <span class="token punctuation">&#125;</span>
+
+        <span class="token keyword">if</span> i<span class="token operator">++</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token function">len</span><span class="token punctuation">(</span>nums<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            right <span class="token operator">:=</span> <span class="token function">new</span><span class="token punctuation">(</span>TreeNode<span class="token punctuation">)</span>
+            right<span class="token punctuation">.</span>Val <span class="token operator">=</span> nums<span class="token punctuation">[</span>i<span class="token punctuation">]</span>
+            <span class="token keyword">if</span> right<span class="token punctuation">.</span>Val <span class="token operator">!=</span> Null <span class="token punctuation">&#123;</span>
+                cur<span class="token punctuation">.</span>Right <span class="token operator">=</span> right
+            <span class="token punctuation">&#125;</span>
+            queue<span class="token punctuation">.</span><span class="token function">PushFront</span><span class="token punctuation">(</span>right<span class="token punctuation">)</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">return</span> root
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><h2 id="二叉树序列化为二叉树数组"><a href="#二叉树序列化为二叉树数组" class="headerlink" title="二叉树序列化为二叉树数组"></a>二叉树序列化为二叉树数组</h2><pre class="line-numbers language-go" data-language="go"><code class="language-go"><span class="token comment">// Marshal 将标准二叉树结构对象序列化为整形切片，其中nil节点会按自定义常量`Null[MinInt32]`标识</span>
+<span class="token keyword">func</span> <span class="token function">Marshal</span><span class="token punctuation">(</span>root <span class="token operator">*</span>TreeNode<span class="token punctuation">)</span> <span class="token punctuation">(</span>res <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    depth <span class="token operator">:=</span> <span class="token function">Depth</span><span class="token punctuation">(</span>root<span class="token punctuation">)</span>
+
+    <span class="token keyword">var</span> dfs <span class="token keyword">func</span><span class="token punctuation">(</span>depth <span class="token builtin">int</span><span class="token punctuation">,</span> nodes <span class="token operator">...</span><span class="token operator">*</span>TreeNode<span class="token punctuation">)</span>
+    dfs <span class="token operator">=</span> <span class="token keyword">func</span><span class="token punctuation">(</span>curDepth <span class="token builtin">int</span><span class="token punctuation">,</span> nodes <span class="token operator">...</span><span class="token operator">*</span>TreeNode<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">if</span> curDepth <span class="token operator">==</span> <span class="token number">1</span> <span class="token operator">&amp;&amp;</span> <span class="token function">len</span><span class="token punctuation">(</span>nodes<span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">1</span> <span class="token operator">&amp;&amp;</span> nodes<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token boolean">nil</span> <span class="token punctuation">&#123;</span>
+            <span class="token keyword">return</span>
+        <span class="token punctuation">&#125;</span>
+        <span class="token keyword">if</span> <span class="token function">len</span><span class="token punctuation">(</span>nodes<span class="token punctuation">)</span> <span class="token operator">&lt;=</span> <span class="token number">0</span> <span class="token punctuation">&#123;</span>
+            <span class="token keyword">return</span>
+        <span class="token punctuation">&#125;</span>
+
+        nexts <span class="token operator">:=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">*</span>TreeNode<span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span>
+        <span class="token keyword">for</span> <span class="token boolean">_</span><span class="token punctuation">,</span> node <span class="token operator">:=</span> <span class="token keyword">range</span> nodes <span class="token punctuation">&#123;</span>
+            <span class="token keyword">if</span> node <span class="token operator">==</span> <span class="token boolean">nil</span> <span class="token punctuation">&#123;</span>
+                res <span class="token operator">=</span> <span class="token function">append</span><span class="token punctuation">(</span>res<span class="token punctuation">,</span> Null<span class="token punctuation">)</span>
+                <span class="token keyword">continue</span>
+            <span class="token punctuation">&#125;</span>
+
+            res <span class="token operator">=</span> <span class="token function">append</span><span class="token punctuation">(</span>res<span class="token punctuation">,</span> node<span class="token punctuation">.</span>Val<span class="token punctuation">)</span>
+            <span class="token keyword">if</span> curDepth <span class="token operator">&lt;</span> depth <span class="token punctuation">&#123;</span>
+                nexts <span class="token operator">=</span> <span class="token function">append</span><span class="token punctuation">(</span>nexts<span class="token punctuation">,</span> node<span class="token punctuation">.</span>Left<span class="token punctuation">)</span>
+                nexts <span class="token operator">=</span> <span class="token function">append</span><span class="token punctuation">(</span>nexts<span class="token punctuation">,</span> node<span class="token punctuation">.</span>Right<span class="token punctuation">)</span>
+            <span class="token punctuation">&#125;</span>
+        <span class="token punctuation">&#125;</span>
+        <span class="token function">dfs</span><span class="token punctuation">(</span>curDepth<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">,</span> nexts<span class="token operator">...</span><span class="token punctuation">)</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token function">dfs</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> root<span class="token punctuation">)</span>
+    <span class="token keyword">return</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><h2 id="二叉树数组格式化输出Leetcode字符串结构"><a href="#二叉树数组格式化输出Leetcode字符串结构" class="headerlink" title="二叉树数组格式化输出Leetcode字符串结构"></a>二叉树数组格式化输出Leetcode字符串结构</h2><pre class="line-numbers language-go" data-language="go"><code class="language-go"><span class="token comment">// Format2Leetcode 根据 Leetcode 测试用例的输入/输出数据格式进行格式化</span>
+<span class="token keyword">func</span> <span class="token function">Format2Leetcode</span><span class="token punctuation">(</span>nums <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token builtin">string</span> <span class="token punctuation">&#123;</span>
+    buffer <span class="token operator">:=</span> bytes<span class="token punctuation">.</span><span class="token function">NewBuffer</span><span class="token punctuation">(</span><span class="token boolean">nil</span><span class="token punctuation">)</span>
+    buffer<span class="token punctuation">.</span><span class="token function">WriteByte</span><span class="token punctuation">(</span><span class="token string">'['</span><span class="token punctuation">)</span>
+    <span class="token keyword">for</span> i<span class="token punctuation">,</span> num <span class="token operator">:=</span> <span class="token keyword">range</span> nums <span class="token punctuation">&#123;</span>
+        <span class="token keyword">if</span> num <span class="token operator">==</span> math<span class="token punctuation">.</span>MinInt32 <span class="token punctuation">&#123;</span>
+            buffer<span class="token punctuation">.</span><span class="token function">WriteString</span><span class="token punctuation">(</span><span class="token string">"null"</span><span class="token punctuation">)</span>
+        <span class="token punctuation">&#125;</span> <span class="token keyword">else</span> <span class="token punctuation">&#123;</span>
+            buffer<span class="token punctuation">.</span><span class="token function">WriteString</span><span class="token punctuation">(</span>fmt<span class="token punctuation">.</span><span class="token function">Sprint</span><span class="token punctuation">(</span>num<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token punctuation">&#125;</span>
+        <span class="token keyword">if</span> i <span class="token operator">&lt;</span> <span class="token function">len</span><span class="token punctuation">(</span>nums<span class="token punctuation">)</span><span class="token operator">-</span><span class="token number">1</span> <span class="token punctuation">&#123;</span>
+            buffer<span class="token punctuation">.</span><span class="token function">WriteByte</span><span class="token punctuation">(</span><span class="token string">','</span><span class="token punctuation">)</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+    buffer<span class="token punctuation">.</span><span class="token function">WriteByte</span><span class="token punctuation">(</span><span class="token string">']'</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> <span class="token function">string</span><span class="token punctuation">(</span>buffer<span class="token punctuation">.</span><span class="token function">Bytes</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><h2 id="测试-Example"><a href="#测试-Example" class="headerlink" title="测试 Example"></a>测试 Example</h2><p>以 <span class="exturl" data-url="aHR0cHM6Ly9sZWV0Y29kZS1jbi5jb20vcHJvYmxlbXMvaW52ZXJ0LWJpbmFyeS10cmVlLw==">Leetcode - 226<i class="fa fa-external-link-alt"></i></span> 题为例进行测试。</p><pre class="line-numbers language-go" data-language="go"><code class="language-go"><span class="token keyword">func</span> <span class="token function">Example</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// Leetcode</span>
+    <span class="token comment">// 226. 翻转二叉树</span>
+    <span class="token comment">// 期望输入 [4,2,7,1,3,6,9]</span>
+    <span class="token comment">// 期望输出 [4,7,2,9,6,3,1]</span>
+
+    <span class="token keyword">var</span> invertTree <span class="token keyword">func</span><span class="token punctuation">(</span>root <span class="token operator">*</span>TreeNode<span class="token punctuation">)</span> <span class="token operator">*</span>TreeNode
+    invertTree <span class="token operator">=</span> <span class="token keyword">func</span><span class="token punctuation">(</span>root <span class="token operator">*</span>TreeNode<span class="token punctuation">)</span> <span class="token operator">*</span>TreeNode <span class="token punctuation">&#123;</span>
+        <span class="token keyword">if</span> root <span class="token operator">==</span> <span class="token boolean">nil</span> <span class="token punctuation">&#123;</span>
+            <span class="token keyword">return</span> root
+        <span class="token punctuation">&#125;</span>
+        root<span class="token punctuation">.</span>Left<span class="token punctuation">,</span> root<span class="token punctuation">.</span>Right <span class="token operator">=</span> root<span class="token punctuation">.</span>Right<span class="token punctuation">,</span> root<span class="token punctuation">.</span>Left
+        <span class="token function">invertTree</span><span class="token punctuation">(</span>root<span class="token punctuation">.</span>Left<span class="token punctuation">)</span>
+        <span class="token function">invertTree</span><span class="token punctuation">(</span>root<span class="token punctuation">.</span>Right<span class="token punctuation">)</span>
+
+        <span class="token keyword">return</span> root
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token comment">// 定义输入切片</span>
+    nums <span class="token operator">:=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">int</span><span class="token punctuation">&#123;</span><span class="token number">4</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">7</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">6</span><span class="token punctuation">,</span> <span class="token number">9</span><span class="token punctuation">&#125;</span>
+    <span class="token comment">// 实际输入</span>
+    actualInput <span class="token operator">:=</span> <span class="token function">Format2Leetcode</span><span class="token punctuation">(</span>nums<span class="token punctuation">)</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"实际输入："</span><span class="token punctuation">,</span> actualInput<span class="token punctuation">)</span>
+
+    <span class="token comment">// 反序列化为二叉树结构</span>
+    root <span class="token operator">:=</span> <span class="token function">Unmarshal</span><span class="token punctuation">(</span>nums<span class="token punctuation">)</span>
+    <span class="token comment">// 翻转二叉树算法函数实现</span>
+    invertRoot <span class="token operator">:=</span> <span class="token function">invertTree</span><span class="token punctuation">(</span>root<span class="token punctuation">)</span>
+    <span class="token comment">// 序列化二叉树为切片</span>
+    invertNums <span class="token operator">:=</span> <span class="token function">Marshal</span><span class="token punctuation">(</span>invertRoot<span class="token punctuation">)</span>
+
+    <span class="token comment">// 实际输出</span>
+    actualOutput <span class="token operator">:=</span> <span class="token function">Format2Leetcode</span><span class="token punctuation">(</span>invertNums<span class="token punctuation">)</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"实际输出："</span><span class="token punctuation">,</span> actualOutput<span class="token punctuation">)</span>
+
+    <span class="token comment">// Output:</span>
+    <span class="token comment">//</span>
+    <span class="token comment">// 实际输入： [4,2,7,1,3,6,9]</span>
+    <span class="token comment">// 实际输出： [4,7,2,9,6,3,1]</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><h2 id="完整代码地址"><a href="#完整代码地址" class="headerlink" title="完整代码地址"></a>完整代码地址</h2><p>该二叉树生成及转换成数组的工具包已经上传到 Github 的 <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2liYW9zb2Z0L2xlZXRjb2RlLXRvb2xraXQ=">leetcode-toolkit<i class="fa fa-external-link-alt"></i></span>。</p></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者： </strong>ibaosoft</li><li class="post-copyright-link"><strong>本文链接：</strong> <a href="http://note.ibaosoft.com/2020/09/18/leetcode-binary-tree-generator/" title="Leetcode 二叉树生成及转换成数组的工具包">http://note.ibaosoft.com/2020/09/18/leetcode-binary-tree-generator/</a></li><li class="post-copyright-license"><strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！</li></ul></div><footer class="post-footer"><div class="post-tags"><a href="/tags/golang/" rel="tag"><i class="fa fa-tag"></i> golang</a> <a href="/tags/binary-tree/" rel="tag"><i class="fa fa-tag"></i> binary tree</a> <a href="/tags/DFS/" rel="tag"><i class="fa fa-tag"></i> DFS</a></div><div class="post-nav"><div class="post-nav-item"><a href="/2020/08/31/hubot-scripting/" rel="prev" title="hubot-scripting"><i class="fa fa-chevron-left"></i> hubot-scripting</a></div><div class="post-nav-item"></div></div></footer></article></div><div class="tabs tabs-comment"><ul class="nav-tabs"><li class="tab"><a href="#comment-gitalk">gitalk</a></li><li class="tab"><a href="#comment-valine">valine</a></li></ul><div class="tab-content"><div class="tab-pane gitalk" id="comment-gitalk"><div class="comments" id="gitalk-container"></div></div><div class="tab-pane valine" id="comment-valine"><div class="comments" id="valine-comments"></div></div></div></div><script>window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }</script></div></main><footer class="footer"><div class="footer-inner"><div class="copyright">&copy; <span itemprop="copyrightYear">2020</span> <span class="with-love"><i class="fa fa-heart"></i> </span><span class="author" itemprop="copyrightHolder">ibaosoft</span> <span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-chart-area"></i> </span><span class="post-meta-item-text">站点总字数：</span> <span title="站点总字数">21k</span> <span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-coffee"></i> </span><span class="post-meta-item-text">站点阅读时长 &asymp;</span> <span title="站点阅读时长">19 分钟</span></div><div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZw==">NexT.Gemini</span> 强力驱动</div><script>(function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"fJNe6ui7aIFd9PiI6TwLDLjA-gzGzoHsz","app_key":"IniJbw5H2hQBchgAzg3WYrMq","server_url":"https://fjne6ui7.lc-cn-n1-shared.com","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();</script></div></footer></div><script src="/lib/anime.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script>!function(){var t=document.createElement("script"),e=window.location.protocol.split(":")[0];t.src="https"===e?"https://zz.bdstatic.com/linksubmit/push.js":"http://push.zhanzhang.baidu.com/push.js";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}()</script><script>if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}</script><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css"><script>NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '5536dd8f7dba92c4985e',
+      clientSecret: '69f5efc407d68e7cc7668306543a2f24d3dbac40',
+      repo        : 'ibaosoft.github.io',
+      owner       : 'ibaosoft',
+      admin       : ['ibaosoft'],
+      id          : 'a9ed975d6a76244723bf376dcab49741',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});</script><script>NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: location.pathname,
+    }, {"enable":true,"appId":"fJNe6ui7aIFd9PiI6TwLDLjA-gzGzoHsz","appKey":"IniJbw5H2hQBchgAzg3WYrMq","placeholder":"请填写您的昵称和邮箱哦，邮箱不会被公开显示呐","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"language":"zh-cn","visitor":false,"comment_count":false,"recordIP":false,"serverURLs":null,"enableQQ":false,"requiredFields":["nick","mail"]}
+    ));
+  }, window.Valine);
+});</script></body></html>
